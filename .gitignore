@@ -1,8 +1,3 @@
 target/
-*.sym
-*.prg
-*.o
-*.elf
-*.ihex
-*.swp
-__pycache__
+*.iml
+.idea
