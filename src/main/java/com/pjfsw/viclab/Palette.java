@@ -1,5 +1,7 @@
 package com.pjfsw.viclab;
 
+import static java.util.stream.Collectors.toList;
+
 import java.awt.Color;
 import java.util.List;
 
@@ -7,9 +9,9 @@ import com.google.common.collect.ImmutableList;
 
 public class Palette {
     public static int OPAQUE = 0xFF000000;
-    private static final int rhBias = 34;
-    private static final int gsBias = 33;
-    private static final int bvBias = 33;
+    private static final int rhBias = 0;
+    private static final int gsBias = 0;
+    private static final int bvBias = 100;
 
     private Palette() {
     }
@@ -33,6 +35,13 @@ public class Palette {
         new Color(0x95, 0x95, 0x95)
     );
 
+    public static List<Color> createPalette(List<Integer> indices) {
+        return indices.stream()
+            .filter(index -> index >= 0 && index < colors.size())
+            .map(colors::get)
+            .collect(toList());
+    }
+
     private static long getSquaredDistance(int v1, int v2) {
         int r = rhBias * (((v2 >> 16)&255)-((v1 >> 16)&255));
         int g = gsBias * (((v2 >> 8)&255)-((v1 >> 8)&255));
@@ -40,15 +49,15 @@ public class Palette {
         return r*r + g*g + b*b;
     }
 
-    private static int getRed(int rgb) {
+    public static int getRed(int rgb) {
         return (rgb >> 16) & 0xFF;
     }
 
-    private static int getGreen(int rgb) {
+    public static int getGreen(int rgb) {
         return (rgb >> 8) & 0xFF;
     }
 
-    private static int getBlue(int rgb) {
+    public static int getBlue(int rgb) {
         return rgb & 0xFF;
     }
 
@@ -77,7 +86,7 @@ public class Palette {
         double delta = max - min;
         if (delta < 0.00001)
         {
-            return 0;
+            return createHsv(0,0,v);
         }
         if( max > 0.0 ) { // NOTE: if Max is == 0, this divide would cause a crash
             s = (delta / max);                  // s
@@ -105,13 +114,14 @@ public class Palette {
     }
 
     private static int getComparableValue(int rgb) {
-        return rgb;
+        return rgbToHsv(rgb);
     }
-    public static Color getNearestColor(int rgb) {
+    public static Color getNearestColor(int rgb, List<Integer> colors) {
+        List<Color> palette = createPalette(colors);
         int hsv = getComparableValue(rgb);
         long shortestDistance = Long.MAX_VALUE;
-        Color colorToUse = colors.get(0);
-        for (Color color : colors) {
+        Color colorToUse = palette.get(0);
+        for (Color color : palette) {
             long distance = getSquaredDistance(hsv, getComparableValue(color.getRGB()));
             if (distance < shortestDistance) {
                 colorToUse = color;

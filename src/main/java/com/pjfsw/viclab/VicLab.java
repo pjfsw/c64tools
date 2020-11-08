@@ -1,6 +1,7 @@
 package com.pjfsw.viclab;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -11,7 +12,7 @@ public class VicLab {
             VicLabFrame viclabFrame = new VicLabFrame();
             viclabFrame.pack();
             viclabFrame.setVisible(true);
-            BufferedImage image = ImageIO.read(VicLab.class.getResource("image.jpg"));
+            BufferedImage image = ImageIO.read(new File(args[0]));
             BufferedImage c64Image = MultiColorProcessor.process(image);
             viclabFrame.setImage(c64Image, 1.6);
 
