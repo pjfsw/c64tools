@@ -9,9 +9,9 @@ import com.google.common.collect.ImmutableList;
 
 public class Palette {
     public static int OPAQUE = 0xFF000000;
-    private static final int rhBias = 0;
-    private static final int gsBias = 0;
-    private static final int bvBias = 100;
+    private static final int rhBias = 33;
+    private static final int gsBias = 33;
+    private static final int bvBias = 34;
 
     private Palette() {
     }
@@ -35,11 +35,8 @@ public class Palette {
         new Color(0x95, 0x95, 0x95)
     );
 
-    public static List<Color> createPalette(List<Integer> indices) {
-        return indices.stream()
-            .filter(index -> index >= 0 && index < colors.size())
-            .map(colors::get)
-            .collect(toList());
+    public static Color getColor(int index) {
+        return colors.get(index);
     }
 
     private static long getSquaredDistance(int v1, int v2) {
@@ -114,17 +111,17 @@ public class Palette {
     }
 
     private static int getComparableValue(int rgb) {
-        return rgbToHsv(rgb);
+        return rgb;//return rgbToHsv(rgb);
     }
-    public static Color getNearestColor(int rgb, List<Integer> colors) {
-        List<Color> palette = createPalette(colors);
+    public static int getNearestColor(int rgb, List<Integer> colors) {
         int hsv = getComparableValue(rgb);
         long shortestDistance = Long.MAX_VALUE;
-        Color colorToUse = palette.get(0);
-        for (Color color : palette) {
+        int colorToUse = 0;
+        for (int index : colors) {
+            Color color = getColor(index);
             long distance = getSquaredDistance(hsv, getComparableValue(color.getRGB()));
             if (distance < shortestDistance) {
-                colorToUse = color;
+                colorToUse = index;
                 shortestDistance = distance;
             }
         }
